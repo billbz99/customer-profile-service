@@ -22,87 +22,6 @@ public class CustomerProfileServiceImpl implements CustomerProfileService {
     private ViewCustomerProfileLookupRepository viewCustomerProfileLookupRepository;
 
     @Override
-    public CustomerProfileLookupResponse findCustomerProfileByPartyClientNumber(String partyClientNumber) {
-        log.info("Get the customer profile for party client number: {}", partyClientNumber);
-
-        Optional<ViewCustomerProfileLookup> viewCustomerProfileLookup
-                = Optional.ofNullable(viewCustomerProfileLookupRepository.findByPartyClientNumber(partyClientNumber)
-                .orElseThrow(() -> {
-                    log.info("Party Client number not found: {}", partyClientNumber);
-                    return new CustomerProfileServiceCustomException("Customer profile with given party client number not found", "PARTY_CLIENT_NUMBER_NOT_FOUND");
-                }));
-
-        Header header = new Header();
-        return getCustomerProfileLookupResponse(viewCustomerProfileLookup, header);
-    }
-
-    @Override
-    public CustomerProfileLookupResponse findCustomerProfileByPartyPhoneFullNumber(String partyPhoneFullNumber) {
-        log.info("Get the customer profile for party phone full number: {}", partyPhoneFullNumber);
-
-        Optional<ViewCustomerProfileLookup> viewCustomerProfileLookup
-                = Optional.ofNullable(viewCustomerProfileLookupRepository.findPersonAttributesByPartyPhoneFullNumber(partyPhoneFullNumber)
-                .orElseThrow(() -> {
-                    log.info("Party Phone Full Number not found: {}", partyPhoneFullNumber);
-                    return new CustomerProfileServiceCustomException("Customer profile with given party phone full number not found", "PARTY_PHONE_FULL_NUMBER_NOT_FOUND");
-                }));
-
-        Header header = new Header();
-        return getCustomerProfileLookupResponse(viewCustomerProfileLookup, header);
-    }
-
-    @Override
-    public CustomerProfileLookupResponse findCustomerProfileByFirstNameLastNameLastNameSSNLastFour(String personFirstName, String personLastName, String ssn) {
-        log.info("Get the customer profile by First name, Last Name and last four SSN");
-
-        Optional<ViewCustomerProfileLookup> viewCustomerProfileLookup
-                = Optional.ofNullable(viewCustomerProfileLookupRepository.findPersonAttributes(personFirstName, personLastName, ssn)
-                .orElseThrow(() -> {
-                    log.info("Person not found with given FirstName: {} LastName: {} SSN Last four: {}", personFirstName, personFirstName, ssn);
-                    return new CustomerProfileServiceCustomException("Customer profile with given First Name, Last Name and last four SSN not found", "ACCCOUNT_NOT_FOUND");
-                }));
-
-        Header header = new Header();
-        return getCustomerProfileLookupResponse(viewCustomerProfileLookup, header);
-    }
-
-    @Override
-    public CustomerProfileLookupResponse findCustomerProfileByAccountNumber(String accountNumber) {
-        log.info("Get the customer profile for account number: {}", accountNumber);
-
-        Optional<ViewCustomerProfileLookup> viewCustomerProfileLookup
-                = Optional.ofNullable(viewCustomerProfileLookupRepository.findByAccountNumber(accountNumber)
-                .orElseThrow(() -> {
-                    log.info("Account number not found: {}", accountNumber);
-                    return new CustomerProfileServiceCustomException("Customer profile with given account number not found", "ACCOUNT_NOT_FOUND");
-                }));
-
-        Header header = new Header();
-        return getCustomerProfileLookupResponse(viewCustomerProfileLookup, header);
-    }
-
-    @Override
-    public CustomerProfileLookupResponse findCustomerProfileByAccountNumberNew(CustomerProfileRequest customerProfileRequest) {
-
-        if (customerProfileRequest.getAccountNumber() == null) {
-            throw new RuntimeException("bad data");
-        }
-
-        String accountNumber = customerProfileRequest.getAccountNumber();
-        log.info("Get the customer profile for account number: {}", accountNumber);
-
-        Optional<ViewCustomerProfileLookup> viewCustomerProfileLookup
-                = Optional.ofNullable(viewCustomerProfileLookupRepository.findByAccountNumber(accountNumber)
-                .orElseThrow(() -> {
-                    log.info("Account number not found: {}", accountNumber);
-                    return new CustomerProfileServiceCustomException("Customer profile with given account number not found", "ACCOUNT_NOT_FOUND");
-                }));
-
-        Header header = new Header();
-        return getCustomerProfileLookupResponse(viewCustomerProfileLookup, header);
-    }
-
-    @Override
     public CustomerProfileLookupResponse processCustomerProfileRequest(CustomerProfileRequest customerProfileRequest) {
 
         Optional<CustomerProfileRequest> customerProfileRequestOptional = Optional.ofNullable(customerProfileRequest);
@@ -113,7 +32,7 @@ public class CustomerProfileServiceImpl implements CustomerProfileService {
 
         if (!areAllFieldsSetInPayLoad(customerProfileRequest)) {
             log.error("Bad or missing fields required for input");
-            throw new CustomerProfileServiceCustomException("Bad or missing fields required for input", "BAD_REQUEST");
+            throw new CustomerProfileServiceCustomException("Bad or missing fields required for input, payload", "BAD_REQUEST");
         }
 
         String action = customerProfileRequest.getPayload().getAction();
