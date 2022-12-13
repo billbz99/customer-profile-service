@@ -17,4 +17,7 @@ public class CustomerProfileLookupResponse {
     @NotEmpty(message = "Header can not be empty")
     private Header header;
     private Payload payload;
+
+    public CustomerProfileLookupResponse(Payload payload) {
+    }
 }
